@@ -1,288 +1,114 @@
-<html dir="ltr"><head><script>(function(){function hookGeo() {
-  //<![CDATA[
-  const WAIT_TIME = 100;
-  const hookedObj = {
-    getCurrentPosition: navigator.geolocation.getCurrentPosition.bind(navigator.geolocation),
-    watchPosition: navigator.geolocation.watchPosition.bind(navigator.geolocation),
-    fakeGeo: true,
-    genLat: 38.883333,
-    genLon: -77.000
-  };
-
-  function waitGetCurrentPosition() {
-    if ((typeof hookedObj.fakeGeo !== 'undefined')) {
-      if (hookedObj.fakeGeo === true) {
-        hookedObj.tmp_successCallback({
-          coords: {
-            latitude: hookedObj.genLat,
-            longitude: hookedObj.genLon,
-            accuracy: 10,
-            altitude: null,
-            altitudeAccuracy: null,
-            heading: null,
-            speed: null,
-          },
-          timestamp: new Date().getTime(),
-        });
-      } else {
-        hookedObj.getCurrentPosition(hookedObj.tmp_successCallback, hookedObj.tmp_errorCallback, hookedObj.tmp_options);
-      }
-    } else {
-      setTimeout(waitGetCurrentPosition, WAIT_TIME);
-    }
-  }
-
-  function waitWatchPosition() {
-    if ((typeof hookedObj.fakeGeo !== 'undefined')) {
-      if (hookedObj.fakeGeo === true) {
-        navigator.geolocation.getCurrentPosition(hookedObj.tmp2_successCallback, hookedObj.tmp2_errorCallback, hookedObj.tmp2_options);
-        return Math.floor(Math.random() * 10000); // random id
-      } else {
-        hookedObj.watchPosition(hookedObj.tmp2_successCallback, hookedObj.tmp2_errorCallback, hookedObj.tmp2_options);
-      }
-    } else {
-      setTimeout(waitWatchPosition, WAIT_TIME);
-    }
-  }
-
-  Object.getPrototypeOf(navigator.geolocation).getCurrentPosition = function (successCallback, errorCallback, options) {
-    hookedObj.tmp_successCallback = successCallback;
-    hookedObj.tmp_errorCallback = errorCallback;
-    hookedObj.tmp_options = options;
-    waitGetCurrentPosition();
-  };
-  Object.getPrototypeOf(navigator.geolocation).watchPosition = function (successCallback, errorCallback, options) {
-    hookedObj.tmp2_successCallback = successCallback;
-    hookedObj.tmp2_errorCallback = errorCallback;
-    hookedObj.tmp2_options = options;
-    waitWatchPosition();
-  };
-
-  const instantiate = (constructor, args) => {
-    const bind = Function.bind;
-    const unbind = bind.bind(bind);
-    return new (unbind(constructor, null).apply(null, args));
-  }
-
-  Blob = function (_Blob) {
-    function secureBlob(...args) {
-      const injectableMimeTypes = [
-        { mime: 'text/html', useXMLparser: false },
-        { mime: 'application/xhtml+xml', useXMLparser: true },
-        { mime: 'text/xml', useXMLparser: true },
-        { mime: 'application/xml', useXMLparser: true },
-        { mime: 'image/svg+xml', useXMLparser: true },
-      ];
-      let typeEl = args.find(arg => (typeof arg === 'object') && (typeof arg.type === 'string') && (arg.type));
-
-      if (typeof typeEl !== 'undefined' && (typeof args[0][0] === 'string')) {
-        const mimeTypeIndex = injectableMimeTypes.findIndex(mimeType => mimeType.mime.toLowerCase() === typeEl.type.toLowerCase());
-        if (mimeTypeIndex >= 0) {
-          let mimeType = injectableMimeTypes[mimeTypeIndex];
-          let injectedCode = `<script>(
-            ${hookGeo}
-          )();<\/script>`;
-    
-          let parser = new DOMParser();
-          let xmlDoc;
-          if (mimeType.useXMLparser === true) {
-            xmlDoc = parser.parseFromString(args[0].join(''), mimeType.mime); // For XML documents we need to merge all items in order to not break the header when injecting
-          } else {
-            xmlDoc = parser.parseFromString(args[0][0], mimeType.mime);
-          }
-
-          if (xmlDoc.getElementsByTagName("parsererror").length === 0) { // if no errors were found while parsing...
-            xmlDoc.documentElement.insertAdjacentHTML('afterbegin', injectedCode);
-    
-            if (mimeType.useXMLparser === true) {
-              args[0] = [new XMLSerializer().serializeToString(xmlDoc)];
-            } else {
-              args[0][0] = xmlDoc.documentElement.outerHTML;
-            }
-          }
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Robotics and Cobotics Class</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0;
         }
-      }
 
-      return instantiate(_Blob, args); // arguments?
-    }
+        header {
+            background-color: #333;
+            color: #fff;
+            padding: 20px;
+            text-align: center;
+        }
 
-    // Copy props and methods
-    let propNames = Object.getOwnPropertyNames(_Blob);
-    for (let i = 0; i < propNames.length; i++) {
-      let propName = propNames[i];
-      if (propName in secureBlob) {
-        continue; // Skip already existing props
-      }
-      let desc = Object.getOwnPropertyDescriptor(_Blob, propName);
-      Object.defineProperty(secureBlob, propName, desc);
-    }
+        nav {
+            background-color: #444;
+            text-align: center;
+            padding: 10px;
+        }
 
-    secureBlob.prototype = _Blob.prototype;
-    return secureBlob;
-  }(Blob);
+        nav a {
+            color: #fff;
+            text-decoration: none;
+            margin: 0 20px;
+        }
 
-  // https://developer.chrome.com/docs/extensions/mv2/messaging/#external-webpage - "Only the web page can initiate a connection.", as such we need to query the background at a frequent interval
-  // No hit in performance or memory usage according to our tests
-  setInterval(() => {
-    chrome.runtime.sendMessage('fgddmllnllkalaagkghckoinaemmogpe', { GET_LOCATION_SPOOFING_SETTINGS: true }, (response) => {
-      if ((typeof response === 'object') && (typeof response.coords === 'object')) {
-        hookedObj.genLat = response.coords.lat;
-        hookedObj.genLon = response.coords.lon;
-        hookedObj.fakeGeo = response.fakeIt;
-      }
-    });
-  }, 500);
-  //]]>
-}hookGeo();})()</script>
-    <meta charset="utf-16">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Université Euro-Méditerranéenne</title>
-        <link rel="Shortcut Icon" href="icone/K.ico">
-    <!-- Styles -->
-	<link rel="stylesheet" href="./LoginCSS/1/css/bootstrap.min.css">
-	<link rel="stylesheet" href="./LoginCSS/1/css/bootstrap-responsive.min.css">
-	<link rel="stylesheet" href="./LoginCSS/1/css/bootstrap-custom.css">   
-    
-    <!--[if lt IE 9]>
-      <script src="./LoginCSS/1/js/html5shiv.js"></script>
-    <![endif]-->
-  </head>
-  <body style="background:#FFFFFF;">    
-	<div id="wrap">
-	<div class="container">
-		<div class="row">
-			
-			<div class="span4"><img id="img-login" src="./LoginCSS/1/img/logo.png"></div>
-			<div class="span4" id="form-login">
-				<form method="post" action="./PC_MV_login.aspx?ReturnUrl=%2fkonosys" onsubmit="javascript:return WebForm_OnSubmit();" id="ctl00" class="form-horizontal well ">
-<div class="aspNetHidden">
-<input type="hidden" name="__EVENTTARGET" id="__EVENTTARGET" value="">
-<input type="hidden" name="__EVENTARGUMENT" id="__EVENTARGUMENT" value="">
-<input type="hidden" name="__LASTFOCUS" id="__LASTFOCUS" value="">
-<input type="hidden" name="__VIEWSTATE" id="__VIEWSTATE" value="/wEPDwULLTExMjQ5NDMwODQPZBYCZg9kFgoCAQ8PZBYCHgtwbGFjZWhvbGRlcgUNSWRlbnRpZmlhbnQgOmQCBQ8PZBYCHwAFDk1vdCBkZSBwYXNzZSA6ZAIJDxBkEBUBCUZyYW7Dp2FpcxUBAmZyFCsDAWcWAWZkAgsPDxYCHgRUZXh0BURWb3RyZSBsb2dpbiBvdSBtb3QgZGUgcGFzc2UgZXN0IGluY29ycmVjdCwgdmV1aWxsZXogcsOpZXNzYXllciBTVlAgLmRkAg0PDxYCHwEFDFNlIGNvbm5lY3RlcmRkZDEJnkgGz3P8cHFmq6oW2v6epjwsyMvJQ26fEz0h7OhC">
-</div>
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+        }
 
-<script type="text/javascript">
-//<![CDATA[
-var theForm = document.forms['ctl00'];
-if (!theForm) {
-    theForm = document.ctl00;
-}
-function __doPostBack(eventTarget, eventArgument) {
-    if (!theForm.onsubmit || (theForm.onsubmit() != false)) {
-        theForm.__EVENTTARGET.value = eventTarget;
-        theForm.__EVENTARGUMENT.value = eventArgument;
-        theForm.submit();
-    }
-}
-//]]>
-</script>
+        .section {
+            margin-bottom: 30px;
+        }
 
+        h2 {
+            color: #333;
+        }
 
-<script src="/konosys/WebResource.axd?d=T9G_rzIc-w2_-167RfEDOPAUvhAQEIz8bsygo2_8zvQ4x-jZUq-eejfbwQ-GgFFRqVv1XnCI-hY7aP6R1nZQ7N6WCaRhLPaoIP1-PkXwk9o1&amp;t=638259444720000000" type="text/javascript"></script>
+        .courses {
+            background-color: #f5f5f5;
+            padding: 20px;
+        }
 
+        .space-planning {
+            background-color: #f9f9f9;
+            padding: 20px;
+        }
 
-<script src="/konosys/WebResource.axd?d=_mIlaRBscyg01QX0x7IYNzo88GvOSx6Nq5IAF84zydx4LXWKq_HySyFLK2JGxJKZJHIRl0uDhgQ_uqfNT7Mm8HEbaRXQ5rnmDdAXiDp6OOU1&amp;t=638259444720000000" type="text/javascript"></script>
-<script type="text/javascript">
-//<![CDATA[
-function WebForm_OnSubmit() {
-if (typeof(ValidatorOnSubmit) == "function" && ValidatorOnSubmit() == false) return false;
-return true;
-}
-//]]>
-</script>
+        .reclamations {
+            background-color: #f5f5f5;
+            padding: 20px;
+        }
 
-<div class="aspNetHidden">
+        .news {
+            background-color: #f9f9f9;
+            padding: 20px;
+        }
 
-	<input type="hidden" name="__VIEWSTATEGENERATOR" id="__VIEWSTATEGENERATOR" value="5DDE01C3">
-	<input type="hidden" name="__EVENTVALIDATION" id="__EVENTVALIDATION" value="/wEdAAbWQaxsq1c866CfdaMbtfcwLd+jhWMJh3Xj6f7fTi5v3lwK8/1gnn25OldlRNyIednFbbvaPZAbvszs37vkFlZvNU/8p2vm6U10fKekFNp6Kc34O/GfAV4V4n0wgFZHr3dXs/MyYGEo4TVSBhPw9eG7xCkYRrwo/TLC6vkfigJc3g==">
-</div>
-					<fieldset>
-						<div class="control-group">
-							<div class="control-label">
-						
-								<label class="icon-user"></label>
-							</div>
-							<div class="controls">
-								<input name="Username" type="text" maxlength="50" id="Username" class="input-large" placeholder="Identifiant :">
-								<span id="RequiredFieldValidator1" class="help-inline" style="visibility:hidden;">*</span>
-							</div>
-						</div>
-						<div class="control-group">
-							<div class="control-label">
-								<label class="icon-lock"></label>
-							</div>
-							<div class="controls">
-								<input name="Password" type="password" maxlength="50" id="Password" class="input-large" placeholder="Mot de passe :">
-								<span id="RequiredFieldValidator2" class="help-inline" style="visibility:hidden;">*</span>
-							</div>
-						</div>
-						<div class="control-group">
-							<div class="control-label">
-								<label class="icon-flag"></label>
-							</div>
-							<div class="controls">
-								<select name="Langues" onchange="javascript:setTimeout('__doPostBack(\'Langues\',\'\')', 0)" id="Langues" class="select-large">
-	<option selected="selected" value="fr">Français</option>
+        footer {
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Robotics and Cobotics Class</h1>
+    </header>
+    <nav>
+        <a href="#courses">Courses</a>
+        <a href="#space-planning">Space Planning</a>
+        <a href="#reclamations">Reclamations</a>
+        <a href="#news">News</a>
+    </nav>
+    <div class="container">
+        <section id="courses" class="section">
+            <h2>Courses</h2>
+            <p>Explore our robotics and cobotics course offerings.</p>
+            <!-- Include course information here -->
+        </section>
 
-</select>
-				
-							</div>
-						</div>
-							
-							<input type="submit" name="Button1" value="Se connecter" onclick="javascript:WebForm_DoPostBackWithOptions(new WebForm_PostBackOptions(&quot;Button1&quot;, &quot;&quot;, true, &quot;&quot;, &quot;&quot;, false, false))" id="Button1" class="btn btn-primary btn-block">
-								<a style="padding-top: 10px;" href="./interfaces/interface_recuperer_IdentificationLost.aspx?CONNECTION_ANONYMOUS=anonymous" id="lien_planning" class="btn btn-primary btn-block">Mot de passe oublié</a><a>
-					</a></fieldset><a>
-				
-<script type="text/javascript">
-//<![CDATA[
-var Page_Validators =  new Array(document.getElementById("RequiredFieldValidator1"), document.getElementById("RequiredFieldValidator2"));
-//]]>
-</script>
+        <section id="space-planning" class="section">
+            <h2>Space Planning</h2>
+            <p>Learn about our state-of-the-art facilities and space planning.</p>
+            <!-- Include space planning details here -->
+        </section>
 
-<script type="text/javascript">
-//<![CDATA[
-var RequiredFieldValidator1 = document.all ? document.all["RequiredFieldValidator1"] : document.getElementById("RequiredFieldValidator1");
-RequiredFieldValidator1.controltovalidate = "Username";
-RequiredFieldValidator1.errormessage = "*";
-RequiredFieldValidator1.evaluationfunction = "RequiredFieldValidatorEvaluateIsValid";
-RequiredFieldValidator1.initialvalue = "";
-var RequiredFieldValidator2 = document.all ? document.all["RequiredFieldValidator2"] : document.getElementById("RequiredFieldValidator2");
-RequiredFieldValidator2.controltovalidate = "Password";
-RequiredFieldValidator2.errormessage = "*";
-RequiredFieldValidator2.evaluationfunction = "RequiredFieldValidatorEvaluateIsValid";
-RequiredFieldValidator2.initialvalue = "";
-//]]>
-</script>
+        <section id="reclamations" class="section">
+            <h2>Reclamations</h2>
+            <p>Information about reclamations and resources.</p>
+            <!-- Include reclamation details here -->
+        </section>
 
-
-<script type="text/javascript">
-//<![CDATA[
-
-var Page_ValidationActive = false;
-if (typeof(ValidatorOnLoad) == "function") {
-    ValidatorOnLoad();
-}
-
-function ValidatorOnSubmit() {
-    if (Page_ValidationActive) {
-        return ValidatorCommonOnSubmit();
-    }
-    else {
-        return true;
-    }
-}
-        //]]>
-</script>
-
-    			
-			</a></form></div><a>
-			
-		</a></div><a>
-	</a></div><a>
-	</a></div><a>
-	
-
-	
-
-</a></body></html>
+        <section id="news" class="section">
+            <h2>News</h2>
+            <p>Stay up-to-date with the latest news and updates from our class.</p>
+            <!-- Include news articles and updates here -->
+        </section>
+    </div>
+    <footer>
+        &copy; 2023 Robotics and Cobotics Class
+    </footer>
+</body>
+</html>
