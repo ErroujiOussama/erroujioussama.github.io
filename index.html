@@ -1,40 +1,58 @@
 <!DOCTYPE html>
-<meta charset="UTF-8">
-<title>Ma Page HTML</title>
-<style>
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-bottom: 20px;
-    }
+<html>
+    <head>
+        <link href="assets/css/tailwind.css" rel="stylesheet">
+    </head>
 
-    th, td {
-        border: 1px solid #dddddd;
-        text-align: left;
-        padding: 8px;
-    }
+    <body>
+        <div class="flex flex-row justify-between mt-4 mb-4 ml-40 mr-40">
+        <img src="assets/images/logo.png" class="w-20 h-20"/>
+          <div class="space-x-4">
+            <a class="font-thin text-sm text-black uppercase" href="#Debouchés">Débouchés</a>
+            <a class="font-thin text-sm text-black uppercase" href="http://www.facebook.com">Syllabus</a>
+            <a class="font-thin text-sm text-black uppercase" href="http://www.facebook.com">Formateur</a>
+            <a class="font-thin text-sm text-black uppercase" href="http://www.facebook.com">Objectifs Pédagogique</a>
+            <a class="font-thin text-sm text-black uppercase" href="#Inscription">Inscription</a>
+          </div>
+        </div>
 
-    th {
-        background-color: #f2f2f2;
-    }
+    <section id="Inscription">
+      <div class="flex flex-row mt-4 mb-4 ml-40 mr-40  h-screen">
+        <div class="space-y-2 flex flex-wrap justify-start content-center">
+           <p class="font-bold text-3xl text-blue-800">Un Grand Titre Accrochant</p>
+           <p class="font-normal text-sm text-gray-800">un petit text content plus de details un petit text content plus de details un petit text content plus de details</p>
+           <button class="bg-blue-800 pt-2 pb-2 pl-4 pr-4 rounded-sm shadow-md border-2 border-gray-800 transform hover:scale-105">
+             <p class="bg-blue-800 text-white text-sm uppercase font-thin">Créer un compte</p> 
+          </button>
+          <button class="bg-white-800 pt-2 pb-2 pl-4 pr-4 rounded-sm shadow-md border-2 border-gray-800 ml-2 transform hover:scale-105">
+            <p class="bg-white-800 text-blue-800 text-sm uppercase font-thin">Récuperer le mot de passe</p> 
+         </button>
+        </div>
+        <div class="flex flex-wrap justify-end content-center">
+          <img class="h-21 w-21" src="assets/images/image1.png"/>
+        </div>
+      </div>
+    </section>
 
-    tr:nth-child(even) {
-        background-color: #f2f2f2;
-    }
+    <section id="Debouchés">
+      <div class="grid grid-cols-2 mt-4 mb-4 ml-40 mr-40">
+        <div class="space-y-2 flex flex-col justify-start content-center">
+          <p class="uppercase font-thin text-lg">Debouchés du Micro-prgramme</p>
+           <p class="font-bold text-xl text-blac">Un Grand Titre Accrochant</p>
+           <p class="font-normal text-sm text-gray-800">un petit text content plus de details un petit text content plus de details un petit text content plus de details</p>
+           <br>
+        </div>
+        <div class="grid grid-cols-2 space-x-1">
+            <div class="border-2 rounded-md  shadow-lg grid grid-cols-1 justify-items-center transform hover:scale-120"><p class="text-black font-bold text-md">Développeur Web FrontEnd</p>
+               <p class="text-sm text-gray-800 font-thin"> 
+                un petit text content plus de details un petit text content plus de details un petit text content plus de details
+            </p>
+          </div>
+            <div class="border-2 rounded-md  shadow-lg grid grid-cols-1 justify-items-center"><p class="text-black font-bold text-md">Développeur Web BackEnd</p></div>
+        </div>
+      </div>
+    </section>
+    <script> alert("test")</script> 
+    </body>
 
-    tr:hover {
-        background-color: #e5e5e5;
-    }
-</style>
-<table><tr><th><p>Tâche</p></th><td>metting gdsc</td></tr><tr><th>Contenu</th><td>arduino course </td></tr><tr><th>Urgente</th><td>Non</td></tr><tr><th>Type</th><td>para-scolaire</td></tr><tr><th>Priorité</th><td>Haute</td></tr></table>
-<table><tr><th>Tâche</th><td>metting gdsc</td></tr><tr><th>Contenu</th><td>arduino course </td></tr><tr><th>Urgente</th><td>Non</td></tr><tr><th>Type</th><td>para-scolaire</td></tr><tr><th>Priorité</th><td>Haute</td></tr></table>
-<table><tr><th>Tâche</th><td>metting gdsc</td></tr><tr><th>Contenu</th><td>arduino course </td></tr><tr><th>Urgente</th><td>Non</td></tr><tr><th>Type</th><td>para-scolaire</td></tr><tr><th>Priorité</th><td>Haute</td></tr></table>
-<table><tr><th>Tâche</th><td>meeting DIGI club</td></tr><tr><th>Contenu</th><td>arduino course </td></tr><tr><th>Urgente</th><td>Non</td></tr><tr><th>Type</th><td>Travail</td></tr><tr><th>Priorité</th><td>Moyenne</td></tr></table>
-<table><tr><th>Tâche</th><td>omar alaoui</td></tr><tr><th>Contenu</th><td>test test</td></tr><tr><th>Urgente</th><td>Oui</td></tr><tr><th>Type</th><td>Travail</td></tr><tr><th>Priorité</th><td>Haute</td></tr></table>
-<table><tr><th>Tâche</th><td>Omar</td></tr><tr><th>Contenu</th><td>test test</td></tr><tr><th>Urgente</th><td>Oui</td></tr><tr><th>Type</th><td>Travail</td></tr><tr><th>Priorité</th><td>Haute</td></tr></table>
-<table><tr><th>Tâche</th><td>Omar</td></tr><tr><th>Contenu</th><td>test test</td></tr><tr><th>Urgente</th><td>Oui</td></tr><tr><th>Type</th><td>Travail</td></tr><tr><th>Priorité</th><td>Haute</td></tr></table>
-<table><tr><th>Tâche</th><td>task 1</td></tr><tr><th>Contenu</th><td>by El Alaoui Omar</td></tr><tr><th>Urgente</th><td>Oui</td></tr><tr><th>Type</th><td>Travail</td></tr><tr><th>Priorité</th><td>Moyenne</td></tr></table>
-<p> jade bousliman hhhhhh 
-z,dk
-ezk,fk
-ezfk,ezk</p>
+</html>
