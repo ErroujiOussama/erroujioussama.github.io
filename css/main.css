@@ -1,0 +1,101 @@
+header {
+  background-color: #333;
+  color: #fff;
+  padding: 20px;
+  text-align: center;
+}
+
+nav {
+  background-color: #444;
+  text-align: center;
+  padding: 10px;
+}
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f0f0f0;}
+nav a {
+  color: #fff;
+  text-decoration: none;
+  margin: 0 20px;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 20px auto;
+  padding: 20px;
+  background-color: #fff;
+}
+
+
+
+.section {
+  margin-bottom: 30px;
+}
+
+h2 {
+  color: #333;
+}
+
+.courses {
+  background-color: #f5f5f5;
+  padding: 20px;
+}
+
+.space-planning {
+  background-color: #f9f9f9;
+  padding: 20px;
+}
+
+.reclamations {
+  background-color: #f5f5f5;
+  padding: 20px;
+}
+
+.news {
+  background-color: #f9f9f9;
+  padding: 20px;
+}
+
+footer {
+  background-color: #333;
+  color: #fff;
+  text-align: center;
+  padding: 10px;
+}
+
+.unit-button {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px;
+  border: 2px solid #fff;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.unit-button i {
+  font-size: 18px;
+}
+
+.unit-button:hover {
+  background-color: rgb(224, 105, 26);
+}
+
+
+img {
+  float: left;
+  margin-right: 20px; /* Adjust this value to create space between the image and the div */
+}
+
+.content {
+  float: left;
+}
+
+.footer {
+  background-color: #333;
+  color: #fff;
+  padding: 10px;
+  text-align: center;
+}
